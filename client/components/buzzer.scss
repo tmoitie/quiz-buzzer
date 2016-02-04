@@ -1,0 +1,18 @@
+.buzzer {
+  width: 300px;
+  height: 300px;
+  border-radius: 150px;
+  background-color: red;
+
+  &.locked {
+    background-color: blue;
+  }
+
+  &.frozen {
+    background-color: gray;
+  }
+
+  &.chosen {
+    background-color: green;
+  }
+}
