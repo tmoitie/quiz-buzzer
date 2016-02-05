@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import update from 'react-addons-update';
 import SocketIO from 'socket.io-client';
 
 import Register from './components/Register';
@@ -23,7 +22,8 @@ export default class Main extends Component {
       chosen: false,
       locked: false,
       chosenTeamName: null,
-      registerErrors: []
+      registerErrors: [],
+      registering: false
     };
     this.updateTeamName = this.updateTeamName.bind(this);
     this.buzz = this.buzz.bind(this);
@@ -42,7 +42,7 @@ export default class Main extends Component {
 
     this.socket.on('connected', ({frozen, chosen, chosenTeamName}) => this.setState({frozen, chosen, chosenTeamName}));
 
-    this.socket.on('registered', ({id}) => this.setState({id}));
+    this.socket.on('registered', ({id}) => this.setState({id, registering: false, registerErrors: []}));
     this.socket.on('freeze', ({chosenId, chosenTeamName}) => this.setState({
       frozen: true, chosen: chosenId === this.state.id, chosenTeamName: chosenTeamName
     }));
@@ -73,7 +73,7 @@ export default class Main extends Component {
   }
 
   updateTeamName(name) {
-    this.setState({teamName: name});
+    this.setState({teamName: name, registering: true});
     this.socket.emit('register', {name: name});
   }
 
@@ -83,24 +83,25 @@ export default class Main extends Component {
 
   addRegisterError(message) {
     this.setState({
-      registerErrors: update(this.state.registerErrors, {
-        $push: [message]
-      })
+      registerErrors: [message],
+      registering: false,
+      teamName: null
     });
   }
 
   resetTeamName() {
+    this.socket.emit('name_changing');
     this.setState({teamName: null});
   }
 
   render() {
-    const {teamName, frozen, locked, chosen, chosenTeamName, registerErrors} = this.state;
+    const {teamName, frozen, locked, chosen, chosenTeamName, registerErrors, registering} = this.state;
     return (
       <div className='container-fluid'>
         <div className='row'>
           <div className='col-xs-12'>
             <h3>Mads Quiz Buzzer</h3>
-            {teamName === null ? (
+            {teamName === null || registering ? (
               <Register onSubmit={this.updateTeamName} errors={registerErrors} addError={this.addRegisterError} />
             ) : (
               <Buzzer buzz={this.buzz} frozen={frozen} locked={locked} chosen={chosen}

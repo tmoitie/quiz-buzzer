@@ -24,15 +24,15 @@ export default class Register extends Component {
 
   submit(e) {
     const { onSubmit, addError } = this.props;
+    e.preventDefault();
     if (this.refs.teamName.value.length < 3) {
-      e.preventDefault();
       return addError('Team name must be more than 3 characters!');
     }
     onSubmit(this.refs.teamName.value);
   }
 
   render() {
-    const {errors} = this.props
+    const {errors} = this.props;
     return (
       <form onSubmit={this.submit}>
         {errors.length > 0 ? (

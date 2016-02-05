@@ -12,7 +12,8 @@ export default class AdminMain extends Component {
       password: null,
       frozen: false,
       chosenTeamName: null,
-      chosenId: null
+      chosenId: null,
+      connectedPlayers: []
     };
     this.updatePassword = this.updatePassword.bind(this);
     this.reset = this.reset.bind(this);
@@ -29,6 +30,14 @@ export default class AdminMain extends Component {
     }));
     this.socket.on('lock_or_reset', () => this.setState({frozen: false}));
     this.socket.on('resetted', () => this.setState({frozen: false}));
+    this.socket.on('connected_players', (players) => this.setState({connectedPlayers: players}));
+    this.socket.on('forbidden', () => console.log('Forbidden'));
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      this.socket.emit('get_connected', {password: this.state.password});
+    }, 800);
   }
 
   updatePassword(e) {
@@ -44,18 +53,26 @@ export default class AdminMain extends Component {
   }
 
   render() {
-    const {frozen, chosenTeamName} = this.state;
+    const {frozen, chosenTeamName, connectedPlayers} = this.state;
     return (
       <div className='container-fluid'>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className='form-group'>
-            <label htmlFor='password'>Password: </label>
-            <input id='password' className='form-control' type='password' onChange={this.updatePassword} />
+        <div className='row'>
+          <div className='col-xs-12'>
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className='form-group'>
+                <label htmlFor='password'>Password: </label>
+                <input id='password' className='form-control' type='password' onChange={this.updatePassword} />
+              </div>
+              <p><button onClick={this.reset} className='btn btn-primary btn-lg'>Reset</button></p>
+              {frozen ? <p><button onClick={this.lock} className='btn btn-danger btn-lg'>Lock</button></p> : null}
+            </form>
+            {frozen ? <h2>Buzzed: "{chosenTeamName}"</h2> : null}
+            <h4>Connected Players ({connectedPlayers.length})</h4>
+            <ul>
+              {connectedPlayers.map(player => <li key={player.name}>{player.name}</li>)}
+            </ul>
           </div>
-          {frozen ? <p>Team: {chosenTeamName}</p> : null}
-          <p><button onClick={this.reset} className='btn btn-primary btn-lg'>Reset</button></p>
-          {frozen ? <p><button onClick={this.lock} className='btn btn-danger btn-lg'>Lock</button></p> : null}
-        </form>
+        </div>
       </div>
     );
   }
