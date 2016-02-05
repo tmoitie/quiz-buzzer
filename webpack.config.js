@@ -26,7 +26,7 @@ module.exports = {
     loaders: [{
       test: /\.js$/,
       loaders: process.env.ENV === 'production' ? ['babel'] : ['react-hot', 'babel'],
-      include: [path.join(__dirname, 'client')]
+      include: [path.join(__dirname, 'client'), path.join(__dirname, 'config.js')]
     }, {
       test: /\.scss$/,
       loaders: ['style', 'css', 'autoprefixer', 'sass']
