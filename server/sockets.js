@@ -14,7 +14,7 @@ const getPlayerNames = () => {
 };
 
 const checkNameExists = (name) => {
-  return getPlayerNames().map(pn => pn.toLowerCase()).indexOf(name.toLowerCase()) !== -1
+  return getPlayerNames().map(pn => pn.toLowerCase()).indexOf(name.toLowerCase()) !== -1;
 };
 
 /**
@@ -26,7 +26,7 @@ io.sockets.on('connection', (socket) => {
 
   socket.emit('connected', {
     frozen: currentBuzz !== null,
-    chosenTeamName: currentBuzz ? players[currentBuzz].name : null
+    chosenTeamName: currentBuzz !== null && players[currentBuzz] ? players[currentBuzz].name : null
   });
 
   setInterval(() => {
