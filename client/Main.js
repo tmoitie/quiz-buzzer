@@ -36,7 +36,7 @@ export default class Main extends Component {
   componentWillMount() {
     this.socket = SocketIO.connect(socketUrl);
 
-    this.socket.on('connected', ({frozen}) => this.setState({frozen}));
+    this.socket.on('connected', ({frozen, chosen, chosenTeamName}) => this.setState({frozen, chosen, chosenTeamName}));
 
     this.socket.on('registered', ({id}) => this.setState({id}));
     this.socket.on('freeze', ({chosenId, chosenTeamName}) => this.setState({
@@ -80,15 +80,17 @@ export default class Main extends Component {
     const {teamName, frozen, locked, chosen, chosenTeamName} = this.state;
     return (
       <div className='container-fluid'>
-        {teamName === null ? (
-          <Register onSubmit={this.updateTeamName} />
-        ) : (
-          <Buzzer buzz={this.buzz} frozen={frozen} locked={locked} chosen={chosen}
-            chosenTeamName={chosenTeamName} />
-        )}
-        {frozen ? <div className='chosen team'>
-          {chosenTeamName} has buzzed
-        </div> : null}
+        <div className='row'>
+          <div className='col-xs-12'>
+            <h3> Mads Quiz Buzzer</h3>
+            {teamName === null ? (
+              <Register onSubmit={this.updateTeamName} />
+            ) : (
+              <Buzzer buzz={this.buzz} frozen={frozen} locked={locked} chosen={chosen}
+                chosenTeamName={chosenTeamName} />
+            )}
+          </div>
+        </div>
       </div>
     );
   }

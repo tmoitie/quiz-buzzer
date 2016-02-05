@@ -20,11 +20,13 @@ export default class Register extends Component {
 
   render() {
     return (
-      <div>
-        Enter a team name:
-        <input type='text' ref='teamName' />
-        <button onClick={this.submit}>Submit</button>
-      </div>
+      <form onSubmit={this.submit}>
+        <div className='form-group'>
+          <label htmlFor='teamName'>Enter a team name:</label>
+          <input type='text' ref='teamName' id='teamName' className='form-control' />
+        </div>
+        <button className='btn btn-primary btn-lg' type='submit'>Submit</button>
+      </form>
     );
   }
 }

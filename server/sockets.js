@@ -17,7 +17,7 @@ io.sockets.on('connection', (socket) => {
 
   socket.emit('connected', {
     frozen: currentBuzz !== null,
-    chosenPlayerName: currentBuzz ? players[currentBuzz].name : null
+    chosenTeamName: currentBuzz ? players[currentBuzz].name : null
   });
 
   setTimeout(() => {

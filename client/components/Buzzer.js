@@ -5,7 +5,11 @@ import './buzzer.scss';
 
 export default class Buzzer extends Component {
   static propTypes = {
-    frozen: PropTypes.bool, chosen: PropTypes.bool, locked: PropTypes.bool, buzz: PropTypes.func
+    frozen: PropTypes.bool,
+    chosen: PropTypes.bool,
+    locked: PropTypes.bool,
+    buzz: PropTypes.func,
+    chosenTeamName:PropTypes.string
   };
 
   static defaultProps = {
@@ -13,13 +17,19 @@ export default class Buzzer extends Component {
   };
 
   render() {
-    const {frozen, chosen, locked, buzz} = this.props;
+    const {frozen, chosen, locked, buzz, chosenTeamName} = this.props;
 
     return (
-      <div className={classnames({
-        buzzer: true, frozen: frozen, chosen: chosen, locked: locked
-      })} onClick={buzz}>
+      <div>
+        <div className={classnames({
+          buzzer: true, frozen: frozen, chosen: chosen, locked: locked
+        })} onMouseDown={buzz} onTouchStart={buzz}>
+          {locked ? <span className='glyphicon glyphicon-lock' /> : null}
+        </div>
 
+        {frozen ? <div className='chosen-team'>
+          “{chosenTeamName}” has buzzed
+        </div> : null}
       </div>
     );
   }

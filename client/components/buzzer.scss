@@ -1,18 +1,31 @@
 .buzzer {
   width: 300px;
   height: 300px;
+  margin: 30px auto;
   border-radius: 150px;
-  background-color: red;
+  background-color: #d00;
+  cursor: pointer;
+  text-align: center;
 
   &.locked {
-    background-color: blue;
+    background-color: #bbb;
   }
 
   &.frozen {
-    background-color: gray;
+    background-color: #bbb;
   }
 
   &.chosen {
-    background-color: green;
+    background-color: #0c0;
   }
+
+  .glyphicon {
+    color: #fff;
+    padding: 95px 0 0;
+    font-size: 100px;
+  }
+}
+
+.chosen-team {
+  text-align: center;
 }

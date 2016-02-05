@@ -47,13 +47,15 @@ export default class AdminMain extends Component {
     const {frozen, chosenTeamName} = this.state;
     return (
       <div className='container-fluid'>
-        <label htmlFor='password'>Password: </label>
-        <input id='password' type='password' onChange={this.updatePassword} />
-        <ul>
-          {frozen ? <li>Team: {chosenTeamName}</li> : null}
-          <li><button onClick={this.reset}>Reset</button></li>
-          {frozen ? <li><button onClick={this.lock}>Lock</button></li> : null}
-        </ul>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className='form-group'>
+            <label htmlFor='password'>Password: </label>
+            <input id='password' className='form-control' type='password' onChange={this.updatePassword} />
+          </div>
+          {frozen ? <p>Team: {chosenTeamName}</p> : null}
+          <p><button onClick={this.reset} className='btn btn-primary btn-lg'>Reset</button></p>
+          {frozen ? <p><button onClick={this.lock} className='btn btn-danger btn-lg'>Lock</button></p> : null}
+        </form>
       </div>
     );
   }
