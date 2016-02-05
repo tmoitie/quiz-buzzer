@@ -1,5 +1,6 @@
 import SocketIO from 'socket.io';
-import {password as adminPassword} from '../config'
+import {password as adminPassword} from '../config';
+import {map} from 'lodash';
 
 const io = SocketIO(8888);
 
@@ -7,6 +8,10 @@ const players = {};
 let nextPlayerId = 1;
 let currentBuzz = null;
 const lockedPlayers = [];
+
+const getPlayerNames = () => {
+  return map(players, (player) => player.name)
+};
 
 /**
  * Stay alive to all clients every 28s
@@ -45,6 +50,10 @@ io.sockets.on('connection', (socket) => {
    * Replies with playerId
    */
   socket.on('register', ({name}) => {
+    if (getPlayerNames().indexOf(name) !== -1) {
+      socket.emit('register_error', 'That name is already taken. Are you already registered?');
+      return;
+    }
     players[id] = {name};
     socket.emit('registered', {id});
   });

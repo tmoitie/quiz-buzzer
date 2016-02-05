@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import update from 'react-addons-update';
 import SocketIO from 'socket.io-client';
 
 import Register from './components/Register';
@@ -21,10 +22,13 @@ export default class Main extends Component {
       frozen: false,
       chosen: false,
       locked: false,
-      chosenTeamName: null
+      chosenTeamName: null,
+      registerErrors: []
     };
     this.updateTeamName = this.updateTeamName.bind(this);
     this.buzz = this.buzz.bind(this);
+    this.addRegisterError = this.addRegisterError.bind(this);
+    this.resetTeamName = this.resetTeamName.bind(this);
   }
 
   getChildContext() {
@@ -46,6 +50,7 @@ export default class Main extends Component {
       locked: lockedPlayers.indexOf(this.state.id) !== -1, frozen: false, chosen: false
     }));
     this.socket.on('resetted', () => this.setState({frozen: false, locked: false, chosen: false}));
+    this.socket.on('register_error', (error) => this.addRegisterError(error));
   }
 
   componentDidMount() {
@@ -76,18 +81,30 @@ export default class Main extends Component {
     this.socket.emit('buzz', {id: this.state.id});
   }
 
+  addRegisterError(message) {
+    this.setState({
+      registerErrors: update(this.state.registerErrors, {
+        $push: [message]
+      })
+    });
+  }
+
+  resetTeamName() {
+    this.setState({teamName: null});
+  }
+
   render() {
-    const {teamName, frozen, locked, chosen, chosenTeamName} = this.state;
+    const {teamName, frozen, locked, chosen, chosenTeamName, registerErrors} = this.state;
     return (
       <div className='container-fluid'>
         <div className='row'>
           <div className='col-xs-12'>
-            <h3> Mads Quiz Buzzer</h3>
+            <h3>Mads Quiz Buzzer</h3>
             {teamName === null ? (
-              <Register onSubmit={this.updateTeamName} />
+              <Register onSubmit={this.updateTeamName} errors={registerErrors} addError={this.addRegisterError} />
             ) : (
               <Buzzer buzz={this.buzz} frozen={frozen} locked={locked} chosen={chosen}
-                chosenTeamName={chosenTeamName} />
+                chosenTeamName={chosenTeamName} teamName={teamName} changeTeamName={this.resetTeamName} />
             )}
           </div>
         </div>
